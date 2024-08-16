@@ -1,14 +1,14 @@
-from telegram import InlineQueryResultArticle, InputTextMessageContent
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler
+from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
+from telegram.ext import Application, CommandHandler, InlineQueryHandler, ContextTypes
 import uuid
 
 # Ganti dengan token API dari BotFather
 TOKEN = '7494808277:AAGfOvFKQM64DAZM9t0PrdeK_yfintW2XdA'
 
-def start(update, context):
-    update.message.reply_text('Bot ini aktif dalam mode inline!')
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text('Bot ini aktif dalam mode inline!')
 
-def inline_query(update, context):
+async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.inline_query.query
 
     # Contoh hasil pencarian
@@ -20,17 +20,16 @@ def inline_query(update, context):
         )
     ]
 
-    context.bot.answer_inline_query(update.inline_query.id, results)
+    await context.bot.answer_inline_query(update.inline_query.id, results)
 
-def main():
-    updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
+def main() -> None:
+    application = Application.builder().token(TOKEN).build()
 
-    dp.add_handler(CommandHandler('start', start))
-    dp.add_handler(InlineQueryHandler(inline_query))
+    application.add_handler(CommandHandler('start', start))
+    application.add_handler(InlineQueryHandler(inline_query))
 
-    updater.start_polling()
-    updater.idle()
+    application.run_polling()
 
 if __name__ == '__main__':
     main()
+
